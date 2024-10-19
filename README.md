@@ -40,7 +40,7 @@ program example
   type(directory_reader) :: reader
   integer(c_int) :: i
 
-  ! This will read this project's own directory and list the files/folders.
+  ! This will read this projects own directory and list the files/folders.
 
   call reader%read_directory("./")
 
