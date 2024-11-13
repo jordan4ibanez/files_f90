@@ -10,6 +10,7 @@ module files_f90
 
 
   public :: file_reader
+  public :: directory_reader
 
 
   !* This is your basic (file -> allocated string) reader. I think it's pretty neat. :)
@@ -23,6 +24,7 @@ module files_f90
   contains
     procedure :: read_file => file_reader_read_file
     procedure :: read_lines => file_reader_read_file_into_lines
+
   end type file_reader
 
 
