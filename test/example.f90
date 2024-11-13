@@ -23,6 +23,6 @@ program example
   end do
 
   ! Remember to close it.
-  call reader%deallocate_memory()
+  call reader%destroy()
 
 end program example
