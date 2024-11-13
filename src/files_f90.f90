@@ -24,7 +24,7 @@ module files_f90
   contains
     procedure :: read_file => file_reader_read_file
     procedure :: read_lines => file_reader_read_file_into_lines
-
+    procedure :: destroy => file_reader_destroy
   end type file_reader
 
 
@@ -124,5 +124,28 @@ contains
       end if
     end do
   end subroutine file_reader_read_file_into_lines
+
+
+  subroutine file_reader_destroy(this)
+    implicit none
+
+    class(file_reader), intent(inout) :: this
+    integer(c_int32_t) :: i
+
+    if (allocated(this%file_string)) then
+      deallocate(this%file_string)
+    end if
+
+    if (allocated(this%lines)) then
+      do i = 1,this%line_count
+        if (allocated(this%lines(i)%string)) then
+          deallocate(this%lines(i)%string)
+        end if
+      end do
+      deallocate(this%lines)
+      this%line_count = 0
+    end if
+  end subroutine file_reader_destroy
+
 
 end module files_f90
