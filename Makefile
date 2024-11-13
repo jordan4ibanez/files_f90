@@ -32,7 +32,6 @@ test:
 
 .PHONY: test_gdb
 test_gdb:
-	@./scripts/create_version_info.sh
 	@MALLOC_CHECK_=2 fpm test --flag   -g --flag   -lmcheck \
 	                          --c-flag -g --c-flag -lmcheck
 
