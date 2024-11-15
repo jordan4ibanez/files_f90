@@ -22,7 +22,9 @@ program example
   ! To string.
   do i = 1,reader%file_count
     print*,reader%files(i)
-    call file_read%read_file(reader%files(i)%string)
+    if (.not. file_read%read_file(reader%files(i)%string)) then
+      error stop
+    end if
     print*,file_read%file_string
     call file_read%destroy()
   end do
@@ -30,7 +32,9 @@ program example
   ! To lines.
   do i = 1,reader%file_count
     print*,reader%files(i)
-    call file_read%read_lines(reader%files(i)%string)
+    if (.not. file_read%read_lines(reader%files(i)%string)) then
+      error stop
+    end if
     print*,file_read%lines
     call file_read%destroy()
   end do

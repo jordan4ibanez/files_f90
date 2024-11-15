@@ -15,7 +15,6 @@ module files_f90
 
   !* This is your basic (file -> allocated string) reader. I think it's pretty neat. :)
   type :: file_reader
-    logical :: exists
     ! Straight shot component.
     character(len = :), allocatable :: file_string
     ! By line components.
@@ -31,20 +30,22 @@ module files_f90
 contains
 
 
-  !* Open a file, read it into a string, close the file, return the string.
-  subroutine file_reader_read_file(this, file_path)
+  !* Open a file, read it into a string, close the file, returns success.
+  function file_reader_read_file(this, file_path) result(success)
     implicit none
 
     class(file_reader), intent(inout) :: this
     character(len = *, kind = c_char), intent(in) :: file_path
+    logical(c_bool) :: success
     integer(c_int) :: file_io_identifier
     integer(c_int) :: file_size
+    logical :: exists
 
     ! First we check if the file exists.
-    inquire(file = file_path, exist = this%exists, size = file_size)
+    inquire(file = file_path, exist = exists, size = file_size)
 
     ! If the file does not exist, we're not going to attempt to allocate anything.
-    if (this%exists) then
+    if (exists) then
 
       ! We want readonly access and streaming of the data into a string.
       open(newunit = file_io_identifier, file = file_path, status = "old", action = "read", access = "stream")
@@ -57,20 +58,25 @@ contains
 
       ! Now we must close it so there is not an IO leak.
       close(file_io_identifier)
+
+      success = .true.
     else
 
       print"(A)","[Files] Error: File path ["//file_path//"] does not exist."
+
+      success = .false.
     end if
-  end subroutine file_reader_read_file
+  end function file_reader_read_file
 
 
-  !* Read a file into an array of heap_strings.
-  subroutine file_reader_read_file_into_lines(this, file_path)
+  !* Read a file into an array of heap_strings. Returns success.
+  function file_reader_read_file_into_lines(this, file_path) result(success)
     use :: forray, only: array_string_insert
     implicit none
 
     class(file_reader), intent(inout) :: this
     character(len = *, kind = c_char), intent(in) :: file_path
+    logical(c_bool) :: success
     !! This is testing debugging
     character(len = :, kind = c_char), allocatable :: temporary_container
     integer(c_int) :: found_newline_index
@@ -80,11 +86,11 @@ contains
     ! I can't figure out how to make the io operation read line by line so we're going to
     ! use the internal file_string component as a temp buffer.
 
-    ! Push the entire string buffer into this.
-    call this%read_file(file_path)
+    success = .false.
 
+    ! Push the entire string buffer into this.
     ! If the file does not exist, we're not going to attempt to do anything.
-    if (.not. this%exists) then
+    if (.not. this%read_file(file_path)) then
       return
     end if
 
@@ -123,7 +129,9 @@ contains
         this%file_string = this%file_string(found_newline_index + 1:length_of_buffer)
       end if
     end do
-  end subroutine file_reader_read_file_into_lines
+
+    success = .true.
+  end function file_reader_read_file_into_lines
 
 
   subroutine file_reader_destroy(this)
