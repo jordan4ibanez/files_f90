@@ -44,4 +44,11 @@ program example
   ! Remember to close it.
   call dir_reader%destroy()
 
+  ! Now, this is just a test to make sure everything is functioning.
+  if (dir_reader%read_directory("floop")) then
+    error stop
+  end if
+
+  call dir_reader%destroy()
+
 end program example
