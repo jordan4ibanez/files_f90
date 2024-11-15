@@ -48,7 +48,11 @@ program example
   if (dir_reader%read_directory("floop")) then
     error stop
   end if
-
   call dir_reader%destroy()
+
+  if (file_read%read_file("flop")) then
+    error stop
+  end if
+  call file_read%destroy()
 
 end program example
