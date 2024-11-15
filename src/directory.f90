@@ -88,11 +88,12 @@ contains
 
 
   !* Get all the files and folders from a directory.
-  subroutine directory_reader_read_directory(this, path)
+  function directory_reader_read_directory(this, path) result(success)
     implicit none
 
     class(directory_reader), intent(inout) :: this
     character(len = *, kind = c_char), intent(in) :: path
+    logical(c_bool) :: success
     type(c_ptr) :: c_for_dir_pointer
     type(for_dir), pointer :: for_dir_pointer
     integer(c_int) :: i, file_index, folder_index
@@ -106,18 +107,25 @@ contains
     !* c_for_dir_pointer and for_dir_pointer are the same memory address.
     !* This was allocated by C, it will be freed by C.
 
+    success = .false.
+
     c_for_dir_pointer = parse_directory_folders(path)
 
     if (.not. c_associated(c_for_dir_pointer)) then
-      error stop "[Directory] error: Failed to open path ["//path//"]"
+      print"(A)","[Directory] error: Failed to open path ["//path//"]"
+      return
     end if
 
     ! Grab the raw pointer into a fortran pointer.
     call c_f_pointer(c_for_dir_pointer, for_dir_pointer)
 
+    ! You still need to free the C memory.
     if (.not. for_dir_pointer%open_success) then
-      error stop "[Directory] error: Failed to open path ["//path//"]"
+      print"(A)","[Directory] error: Failed to open path ["//path//"]"
+      return
     end if
+
+    ! The rest will error out because that means there is an implementation issue if it's ever hit.
 
     ! A simple assertion to ensure nothing has gone horribly wrong.
     if (for_dir_pointer%array_length /= for_dir_pointer%file_count + for_dir_pointer%folder_count) then
@@ -142,7 +150,7 @@ contains
     call c_f_pointer(for_dir_pointer%strings, c_strings, [for_dir_pointer%array_length])
 
     if (size(c_strings) /= for_dir_pointer%array_length) then
-      error stop "[Directory] error: Incorrect allocation length for c strings."
+      error stop "[Directory] error: Incorrect allocation length for C strings."
     end if
 
     ! We shall now pre-allocate the internal type memory with the counted number
@@ -175,7 +183,9 @@ contains
     if (.not. close_directory_folder_parse(c_for_dir_pointer)) then
       error stop "[Directory] error: Failed to free the c for_dir."
     end if
-  end subroutine directory_reader_read_directory
+
+    success = .true.
+  end function directory_reader_read_directory
 
 
   !* Deallocate the string arrays within the directory_reader and reset the counts.
