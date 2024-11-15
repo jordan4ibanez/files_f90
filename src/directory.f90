@@ -113,7 +113,7 @@ contains
     c_for_dir_pointer = parse_directory_folders(path)
 
     if (.not. c_associated(c_for_dir_pointer)) then
-      print"(A)","[Directory] error: Failed to open path ["//path//"]"
+      error stop "[Directory] Error: For_dir pointer is null. ["//path//"]"
       return
     end if
 
