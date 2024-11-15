@@ -61,9 +61,7 @@ contains
 
       success = .true.
     else
-
-      print"(A)","[Files] Error: File path ["//file_path//"] does not exist."
-
+      ! print"(A)","[Files] Error: File path ["//file_path//"] does not exist."
       success = .false.
     end if
   end function file_reader_read_file
