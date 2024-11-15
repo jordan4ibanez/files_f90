@@ -168,7 +168,7 @@ for_dir *parse_directory_folders(const char *input_path)
   }
   else
   {
-    printf("[FORDIRENT C] SEVERE ERROR: Path [%s] failed to open.", path);
+    // printf("[FORDIRENT C] SEVERE ERROR: Path [%s] failed to open.", path);
     output->open_success = false;
   }
 
