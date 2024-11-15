@@ -122,7 +122,7 @@ contains
 
     !* You still need to free the memory. (good practice)
     if (.not. for_dir_pointer%open_success) then
-      print"(A)","[Directory] error: Failed to open path ["//path//"]"
+      print"(A)","[Directory] Error: Failed to open path ["//path//"]"
       return
     end if
 
@@ -130,28 +130,28 @@ contains
 
     ! A simple assertion to ensure nothing has gone horribly wrong.
     if (for_dir_pointer%array_length /= for_dir_pointer%file_count + for_dir_pointer%folder_count) then
-      error stop "[Directory] error: Array length does not total file count plus folder count."
+      error stop "[Directory] Error: Array length does not total file count plus folder count."
     end if
 
     ! First in the data extraction is to get the is_folder tracker.
     call c_f_pointer(for_dir_pointer%is_folder, is_folder, [for_dir_pointer%array_length])
 
     if (size(is_folder) /= for_dir_pointer%array_length) then
-      error stop "[Directory] error: Incorrect allocation length for is_folder."
+      error stop "[Directory] Error: Incorrect allocation length for is_folder."
     end if
 
     ! Next we extract the lengths.
     call c_f_pointer(for_dir_pointer%string_lengths, string_lengths, [for_dir_pointer%array_length])
 
     if (size(string_lengths) /= for_dir_pointer%array_length) then
-      error stop "[Directory] error: Incorrect allocation length for string lengths."
+      error stop "[Directory] Error: Incorrect allocation length for string lengths."
     end if
 
     ! The final move is we extract the array of strings.
     call c_f_pointer(for_dir_pointer%strings, c_strings, [for_dir_pointer%array_length])
 
     if (size(c_strings) /= for_dir_pointer%array_length) then
-      error stop "[Directory] error: Incorrect allocation length for C strings."
+      error stop "[Directory] Error: Incorrect allocation length for C strings."
     end if
 
     ! We shall now pre-allocate the internal type memory with the counted number
@@ -182,7 +182,7 @@ contains
 
     !? C now frees the memory.
     if (.not. close_directory_folder_parse(c_for_dir_pointer)) then
-      error stop "[Directory] error: Failed to free the c for_dir."
+      error stop "[Directory] Error: Failed to free the C for_dir."
     end if
 
     success = .true.
