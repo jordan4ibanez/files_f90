@@ -73,6 +73,7 @@ contains
 
 
   !* A helper to bind to the C code.
+  !! DO NOT EXPOSE THIS FUNCTION.
   function parse_directory_folders(path) result(dir_pointer)
     use, intrinsic :: iso_c_binding
     implicit none
