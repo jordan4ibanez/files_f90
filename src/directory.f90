@@ -120,7 +120,7 @@ contains
     ! Grab the raw pointer into a fortran pointer.
     call c_f_pointer(c_for_dir_pointer, for_dir_pointer)
 
-    ! You still need to free the C memory.
+    !* You still need to free the memory. (good practice)
     if (.not. for_dir_pointer%open_success) then
       print"(A)","[Directory] error: Failed to open path ["//path//"]"
       return
