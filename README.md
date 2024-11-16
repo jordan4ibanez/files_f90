@@ -1,5 +1,5 @@
 # files_f90
-A directory reader for Fortran.
+A directory reader for Fortran 03+. 
 
 -----
 
